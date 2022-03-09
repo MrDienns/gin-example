@@ -2,6 +2,7 @@ package web
 
 import (
 	"github.com/MrDienns/gin-example/internal/web/api"
+	"github.com/MrDienns/gin-example/internal/web/health"
 	"github.com/gin-gonic/gin"
 	ginprometheus "github.com/zsais/go-gin-prometheus"
 )
@@ -25,6 +26,7 @@ func (s *server) Start() error {
 
 	rootGroup := s.engine.Group("/")
 	api.RegisterRoutes(rootGroup)
+	health.RegisterRoutes(rootGroup)
 
 	return s.engine.Run()
 }
