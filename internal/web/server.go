@@ -3,10 +3,11 @@ package web
 import (
 	"github.com/MrDienns/gin-example/internal/web/api"
 	"github.com/gin-gonic/gin"
+	ginprometheus "github.com/zsais/go-gin-prometheus"
 )
 
 type server struct {
-	router *gin.Engine
+	engine *gin.Engine
 }
 
 // NewServer will create a new *server.
@@ -17,9 +18,13 @@ func NewServer() *server {
 // Start will start a webserver. This method will block further code execution until the webserver is shut down.
 func (s *server) Start() error {
 	gin.SetMode(gin.ReleaseMode)
-	s.router = gin.Default()
+	s.engine = gin.Default()
 
-	api.RegisterRoutes(s.router.Group("/"))
+	prom := ginprometheus.NewPrometheus("gin")
+	prom.Use(s.engine)
 
-	return s.router.Run()
+	rootGroup := s.engine.Group("/")
+	api.RegisterRoutes(rootGroup)
+
+	return s.engine.Run()
 }
